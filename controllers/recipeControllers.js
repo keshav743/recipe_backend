@@ -1,4 +1,5 @@
 const Recipe = require("../models/recipe");
+const mongoose = require("mongoose");
 
 module.exports.getAllRecipesController = async (req, res, next) => {
   const queriedRecipes = await Recipe.find({})
@@ -13,13 +14,30 @@ module.exports.getAllRecipesController = async (req, res, next) => {
 };
 
 module.exports.getRecipeByIdController = async (req, res, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(404).json({
+      status: "failed",
+      data: {
+        errMsg: "ID is not valid.",
+      },
+    });
+  }
   const queriedRecipe = await Recipe.findById(req.params.id);
-  return res.status(200).json({
-    status: "success",
-    data: {
-      recipe: queriedRecipe,
-    },
-  });
+  if (!queriedRecipe) {
+    return res.status(404).json({
+      status: "failed",
+      data: {
+        recipe: queriedRecipe,
+      },
+    });
+  } else {
+    return res.status(200).json({
+      status: "success",
+      data: {
+        recipe: queriedRecipe,
+      },
+    });
+  }
 };
 
 module.exports.searchController = async (req, res, next) => {
