@@ -16,6 +16,12 @@ router.post(
   recipeController.addNewRecipeController
 );
 
+router.get(
+  "/search/:searchStr",
+  tokenMiddleware.checkToken,
+  recipeController.searchController
+);
+
 router.post(
   "/edit/:recipeId/:userId",
   tokenMiddleware.checkToken,

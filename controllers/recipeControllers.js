@@ -22,6 +22,27 @@ module.exports.getRecipeByIdController = async (req, res, next) => {
   });
 };
 
+module.exports.searchController = async (req, res, next) => {
+  if (req.params.searchStr == "limitAll6") {
+    const queriedRecipe = await Recipe.find({}).limit(6).exec();
+    return res.status(200).json({
+      status: "success",
+      data: {
+        recipe: queriedRecipe,
+      },
+    });
+  }
+  const queriedRecipe = await Recipe.find({
+    recipeName: { $regex: req.params.searchStr, $options: "i" },
+  });
+  return res.status(200).json({
+    status: "success",
+    data: {
+      recipe: queriedRecipe,
+    },
+  });
+};
+
 module.exports.addNewRecipeController = async (req, res, next) => {
   const newRecipe = await Recipe.create(req.body);
   return res.status(201).json({
